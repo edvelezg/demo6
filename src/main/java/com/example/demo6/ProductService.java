@@ -15,6 +15,8 @@ public class ProductService {
     }
 
     public Product create(Product product) {
+        product.setId(null); // ensure DB auto-generates it (BIGSERIAL / IDENTITY)
+
         product.setCreatedAt(Instant.now());
         product.setUpdatedAt(Instant.now());
         return repository.save(product);
@@ -43,5 +45,26 @@ public class ProductService {
 
     public void delete(Long id) {
         repository.deleteById(id);
+    }
+
+    public Product patch(Long id, Product product) {
+        Product existing = getById(id);
+
+        if (product.getName() != null) {
+            existing.setName(product.getName());
+        }
+        if (product.getDescription() != null) {
+            existing.setDescription(product.getDescription());
+        }
+        if (product.getPrice() != null) {
+            existing.setPrice(product.getPrice());
+        }
+        if (product.getQuantity() != null) {
+            existing.setQuantity(product.getQuantity());
+        }
+
+        existing.setUpdatedAt(Instant.now());
+
+        return repository.save(existing);
     }
 }
